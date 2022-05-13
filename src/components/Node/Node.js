@@ -4,7 +4,7 @@ import {
   NodeTypesContext,
   NodeDispatchContext,
   StageContext,
-  CacheContext
+  CacheContext, ConnectionRecalculateContext
 } from "../../context";
 import { getPortRect, calculateCurve } from "../../connectionCalculator";
 import { Portal } from "react-portal";
@@ -32,8 +32,11 @@ const Node = ({
   const { label, deletable, inputs = [], outputs = [] } = currentNodeType;
 
   const nodeWrapper = React.useRef();
+  const [updateCount, setUpdateCount] = React.useState(0);
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [menuCoordinates, setMenuCoordinates] = React.useState({ x: 0, y: 0 });
+
+  const triggerRecalculation = React.useContext(ConnectionRecalculateContext);
 
   const byScale = value => (1 / stageState.scale) * value;
 
@@ -157,6 +160,16 @@ const Node = ({
     }
   };
 
+  const handleSetInput = (port, value, ctlName) => {
+    nodesDispatch({
+      type: "SET_PORT_DATA",
+      data: value,
+      nodeId: id,
+      portName: port,
+      controlName: ctlName,
+    });
+  }
+
   return (
     <Draggable
       className={styles.wrapper}
@@ -178,7 +191,13 @@ const Node = ({
         renderNodeHeader(NodeHeader, currentNodeType, {
           openMenu: handleContextMenu,
           closeMenu: closeContextMenu,
-          deleteNode
+          deleteNode,
+          setInputValue: handleSetInput,
+          updateSelf: ()=>{
+            setUpdateCount(updateCount+1);
+            triggerRecalculation();
+          },
+          nodeId: id,
         })
       ) : (
         <NodeHeader>{label}</NodeHeader>
@@ -190,6 +209,7 @@ const Node = ({
         connections={connections}
         updateNodeConnections={updateNodeConnections}
         inputData={inputData}
+        update={updateCount}
       />
       {menuOpen ? (
         <Portal>

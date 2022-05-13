@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { useId } from "@reach/auto-id";
 import Stage from "./components/Stage/Stage";
 import Node from "./components/Node/Node";
