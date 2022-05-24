@@ -17,6 +17,7 @@ const Node = ({
   width,
   x,
   y,
+  isSelected,
   stageRect,
   connections,
   type,
@@ -175,7 +176,8 @@ const Node = ({
       className={styles.wrapper}
       style={{
         width,
-        transform: `translate(${x}px, ${y}px)`
+        transform: `translate(${x}px, ${y}px)`,
+        outline: isSelected ? "3px dashed red" : "",
       }}
       onDragStart={startDrag}
       onDrag={handleDrag}
