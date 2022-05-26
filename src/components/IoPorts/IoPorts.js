@@ -21,7 +21,7 @@ function useTransputs (transputsFn, transputType, nodeId, inputData, connections
 
   const transputs = React.useMemo(() => {
     if (Array.isArray(transputsFn)) return transputsFn;
-    return transputsFn(inputData, connections, executionContext);
+    return transputsFn(nodeId, inputData, connections, executionContext);
   }, [transputsFn, inputData, connections, executionContext]);
   const prevTransputs = usePrevious(transputs);
 
